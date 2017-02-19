@@ -32,25 +32,63 @@ CREATE TABLE sibling (
 	FOREIGN KEY (sibling_id) REFERENCES person(id)
 );
 
-INSERT INTO account (id, email, password)
-VALUES (
-	1,
-	'foo@bar.com',
-	'asdfasdf'
+CREATE TABLE membership (
+
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	season_start YEAR NOT NULL,
+	season_end YEAR NOT NULL,
+
+	UNIQUE(season_start, season_end)
 );
 
-INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
-VALUES (
-	1, 1, 'Eka', 'Uimari', '2004-05-09', 'Eka osoite', '12345', 'Turku'
+CREATE TABLE member (
+	membership_id INTEGER NOT NULL,
+	person_id INTEGER NOT NULL,
+
+	PRIMARY KEY (membership_id, person_id),
+	FOREIGN KEY (membership_id) REFERENCES membership(id),
+	FOREIGN KEY (person_id) REFERENCES person(id)
 );
 
-INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
-VALUES (
-	2, 1, 'Toka', 'Uimari', '2002-04-30', 'Eka osoite', '12345', 'Turku'
+CREATE TABLE place (
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL
 );
 
-INSERT INTO sibling (person_id, sibling_id)
-VALUES (1, 2);
+CREATE TABLE course (
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	place_id INTEGER,
+	name VARCHAR(255) NOT NULL,
+	regstartdate DATE NOT NULL,
+	start_date DATE NOT NULL,
+	start_time TIME,
+	end_time TIME,
+	price DECIMAL NOT NULL,
+	member_price DECIMAL NOT NULL,
+	max_participants INTEGER,
 
-INSERT INTO sibling (person_id, sibling_id)
-VALUES (2, 1);
+	FOREIGN KEY (place_id) REFERENCES place(id)
+);
+
+-- INSERT INTO account (id, email, password)
+-- VALUES (
+-- 	1,
+-- 	'foo@bar.com',
+-- 	'asdfasdf'
+-- );
+
+-- INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
+-- VALUES (
+-- 	1, 1, 'Eka', 'Uimari', '2004-05-09', 'Eka osoite', '12345', 'Turku'
+-- );
+
+-- INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
+-- VALUES (
+-- 	2, 1, 'Toka', 'Uimari', '2002-04-30', 'Eka osoite', '12345', 'Turku'
+-- );
+
+-- INSERT INTO sibling (person_id, sibling_id)
+-- VALUES (1, 2);
+
+-- INSERT INTO sibling (person_id, sibling_id)
+-- VALUES (2, 1);

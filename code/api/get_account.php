@@ -12,6 +12,11 @@ WHERE a.id = $id
 
 $result = queryDb($query);
 
+if (mysqli_num_rows($result) < 1) {
+	http_response_code(404);
+	die("Not found");
+}
+
 $account = null;
 
 while ($row = mysqli_fetch_object($result)) {

@@ -10,3 +10,7 @@ docker exec -d aui-courses-new bash -c "echo 'error_reporting = E_ALL' >> /etc/p
 docker exec -i aui-courses-new mysql -e "create user 'course_admin'@'%' identified by 'aurajoki'"
 docker exec -i aui-courses-new mysql -e "GRANT ALL PRIVILEGES ON aurajoen_courses_new . * TO 'course_admin'@'%';"
 docker exec -i aui-courses-new mysql < init.sql
+
+sleep 5
+
+./curling.sh
