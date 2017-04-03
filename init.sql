@@ -3,13 +3,13 @@ CREATE DATABASE IF NOT EXISTS aurajoen_courses_new DEFAULT CHARSET utf8;
 
 USE aurajoen_courses_new;
 
-CREATE TABLE account (
+CREATE TABLE IF NOT EXISTS account (
 	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE person (
+CREATE TABLE IF NOT EXISTS person (
 	
 	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	account_id INTEGER NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE person (
 	FOREIGN KEY (account_id) REFERENCES account(id)
 );
 
-CREATE TABLE sibling (
+CREATE TABLE IF NOT EXISTS sibling (
 	person_id INTEGER NOT NULL,
 	sibling_id INTEGER NOT NULL,
 	PRIMARY KEY (person_id, sibling_id),
@@ -32,63 +32,85 @@ CREATE TABLE sibling (
 	FOREIGN KEY (sibling_id) REFERENCES person(id)
 );
 
-CREATE TABLE membership (
-
+CREATE TABLE IF NOT EXISTS membership (
 	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	season_start YEAR NOT NULL,
-	season_end YEAR NOT NULL,
-
-	UNIQUE(season_start, season_end)
+	season_id INTEGER NOT NULL,
+	price DECIMAL(3,2) NOT NULL
 );
 
-CREATE TABLE member (
+CREATE TABLE IF NOT EXISTS membership (
+	
+	id INTEGER NOT NULL PRIMARY KEY,
 	membership_id INTEGER NOT NULL,
 	person_id INTEGER NOT NULL,
 
-	PRIMARY KEY (membership_id, person_id),
 	FOREIGN KEY (membership_id) REFERENCES membership(id),
-	FOREIGN KEY (person_id) REFERENCES person(id)
+	FOREIGN KEY (person_id) REFERENCES person(id),
+	UNIQUE (membership_id, person_id)
 );
 
-CREATE TABLE place (
+CREATE TABLE IF NOT EXISTS season (
+
 	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+	season_start YEAR NOT NULL,
+	season_end YEAR NOT NULL,
+
+	UNIQUE (season_start, season_end)
 );
 
-CREATE TABLE course (
+CREATE TABLE IF NOT EXISTS period (
+
 	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	place_id INTEGER,
+    season_id INTEGER NOT NULL,
+    quarter ENUM('Q1','Q2','Q3','Q4','SUMMER'),
+
+    FOREIGN KEY (season_id) REFERENCES season(id),
+    UNIQUE (season_id, quarter)
+);
+
+CREATE TABLE IF NOT EXISTS place (
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS product (
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
-	regstartdate DATE NOT NULL,
-	start_date DATE NOT NULL,
+	description TEXT NOT NULL default ''
+);
+
+CREATE TABLE IF NOT EXISTS event (
+
+	id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	product_id INTEGER NOT NULL,
+	season_id INTEGER NOT NULL,
+	place_id INTEGER NOT NULL,
 	start_time TIME,
 	end_time TIME,
-	price DECIMAL NOT NULL,
-	member_price DECIMAL NOT NULL,
-	max_participants INTEGER,
 
+	regstartdate DATE NOT NULL,
+	start_date DATE NOT NULL,
+
+	max_participants INTEGER,
+	price DECIMAL(3,2) NOT NULL,
+	member_price DECIMAL(3,2) NOT NULL,
+
+	FOREIGN KEY (product_id) REFERENCES product(id),
+	FOREIGN KEY (season_id) REFERENCES season(id),
 	FOREIGN KEY (place_id) REFERENCES place(id)
 );
 
--- INSERT INTO account (id, email, password)
--- VALUES (
--- 	1,
--- 	'foo@bar.com',
--- 	'asdfasdf'
--- );
+-- *************************
 
--- INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
--- VALUES (
--- 	1, 1, 'Eka', 'Uimari', '2004-05-09', 'Eka osoite', '12345', 'Turku'
--- );
+-- use aurajoen_courses;
 
--- INSERT INTO person (id, account_id, first_name, last_name, birthday, street_address, zipcode, post_office)
--- VALUES (
--- 	2, 1, 'Toka', 'Uimari', '2002-04-30', 'Eka osoite', '12345', 'Turku'
--- );
+-- set charset latin1;
 
--- INSERT INTO sibling (person_id, sibling_id)
--- VALUES (1, 2);
-
--- INSERT INTO sibling (person_id, sibling_id)
--- VALUES (2, 1);
+-- insert into aurajoen_courses_new.place (name)
+-- select distinct(convert(place using utf8))
+-- from aurajoen_courses.course
+-- where regstartdate > '2015-00-00'
+-- 	and lower(name) not like '%j%sen%' and lower(type) not like '%j%sen%'
+--     and trim(place) not like ''
+-- ;

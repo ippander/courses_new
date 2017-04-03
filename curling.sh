@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl  -X POST -i http://localhost/api/add_account.php \
+curl  -X POST -i http://localhost/api/account \
 	--data '{ "email": "foobar@baz.com", "password": "asdf"  }' \
 	-H 'Content-Type: application/json'
 
