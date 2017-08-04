@@ -2,7 +2,147 @@
 
 require_once "f_course.php";
 
+/********** ENROLLMENTS *******/
 
+$app->get('/admin/enrollment', function ($request, $response) {
+
+	$filters = json_decode($request->getQueryParams()['_filters']);
+
+	$id = null;
+	$searchField = "pa.event_id";
+
+	if (property_exists($filters, 'event_id')) {
+		$id = json_decode($request->getQueryParams()['_filters'])->event_id;
+	} else {
+		$id = json_decode($request->getQueryParams()['_filters'])->person_id;
+		$searchField = "pa.person_id";
+	}
+
+
+	$stmt = pdo()->prepare("
+		SELECT
+			pa.*,
+			pe.first_name, pe.last_name, pe.birthday,
+			p.name as course_name, e.weekday, pl.name as place, e.start_time, e.end_time
+		FROM participant pa, person pe, course_event e, product p, place pl
+		WHERE p.id=e.product_id AND e.id = pa.event_id AND pa.person_id = pe.id AND e.place_id=pl.id
+			AND " . $searchField . " = ?
+		");
+
+	$stmt->execute([ $id ]);
+
+	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->get('/admin/enrollment/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+
+	$stmt = pdo()->prepare("SELECT * FROM participant WHERE id = ?");
+	$stmt->execute([$id]);
+	
+	return $response->withJson($stmt->fetch(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->post('/admin/enrollment', function ($request, $response) {
+
+	$added = addPlace(json_decode($request->getBody()));
+
+	return $response->withJson($added, 201, JSON_UNESCAPED_UNICODE);
+});
+
+$app->put('/admin/enrollment/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+	$obj = json_decode($request->getBody());
+	
+	$pdo = pdo();
+
+	$stmt = $pdo->prepare("
+		UPDATE participant SET name = ?, address = ?
+		WHERE id = ?
+	");
+
+	$stmt->execute([$obj->name, $obj->address, $id]);
+
+	return $response->withJson($obj, 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->delete('/admin/enrollment/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+	$pdo = pdo();
+
+	$stmt = $pdo->prepare("
+		DELETE FROM participant
+		WHERE id = ?
+	");
+
+	$stmt->execute([$id]);
+
+	return $response->withStatus(204);
+});
+
+/*********** PERSON **********/
+
+$app->get('/admin/person', function ($request, $response) {
+
+	$stmt = pdo()->prepare("SELECT * FROM person ORDER BY last_name, first_name");
+	$stmt->execute();
+
+	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->get('/admin/person/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+
+	$stmt = pdo()->prepare("SELECT * FROM person WHERE id = ?");
+	$stmt->execute([$id]);
+	
+	return $response->withJson($stmt->fetch(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->post('/admin/person', function ($request, $response) {
+
+	$added = addPlace(json_decode($request->getBody()));
+
+	return $response->withJson($added, 201, JSON_UNESCAPED_UNICODE);
+});
+
+$app->put('/admin/person/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+	$obj = json_decode($request->getBody());
+	
+	$pdo = pdo();
+
+	$stmt = $pdo->prepare("
+		UPDATE person SET first_name = ?, last_name = ?, birthday = ?, notes = ?
+		WHERE id = ?
+	");
+
+	$stmt->execute([
+		$obj->first_name, $obj->last_name, $obj->birthday, $obj->notes, $obj->id
+		]);
+
+	return $response->withJson($obj, 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->delete('/admin/person/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+	$pdo = pdo();
+
+	$stmt = $pdo->prepare("
+		DELETE FROM person
+		WHERE id = ?
+	");
+
+	$stmt->execute([$id]);
+
+	return $response->withStatus(204);
+});
 
 
 /*********** PLACE ***********/
@@ -40,11 +180,11 @@ $app->put('/admin/place/{id}', function ($request, $response) {
 	$pdo = pdo();
 
 	$stmt = $pdo->prepare("
-		UPDATE place SET name = ?
+		UPDATE place SET name = ?, address = ?
 		WHERE id = ?
 	");
 
-	$stmt->execute([$obj->name, $id]);
+	$stmt->execute([$obj->name, $obj->address, $id]);
 
 	return $response->withJson($obj, 200, JSON_UNESCAPED_UNICODE);
 });
@@ -203,7 +343,11 @@ $app->delete('/admin/course/{id}', function ($request, $response) {
 
 $app->get('/admin/event', function ($request, $response) {
 
-	$stmt = pdo()->prepare("SELECT * FROM event");
+	$stmt = pdo()->prepare("
+		SELECT p.name as course_name, s.name as season_name, e.*, pl.name as place_name
+		FROM product p, course_event e, place pl, season s
+		WHERE p.id=e.product_id and e.place_id=pl.id and e.season_id=s.id
+		");
 	$stmt->execute();
 
 	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
@@ -214,10 +358,17 @@ $app->get('/admin/event/{id}', function ($request, $response) {
 
 	$id = $request->getAttribute("id");
 
-	$stmt = pdo()->prepare("SELECT * FROM event WHERE id = ?");
+	$stmt = pdo()->prepare("SELECT * FROM course_event WHERE id = ?");
 	$stmt->execute([$id]);
+
+	$res = $stmt->fetch();
+
+	$res['price'] = (float)$res['price'];
+	$res['member_price'] = (float)$res['member_price'];
+
+	// var_dump($res);
 	
-	return $response->withJson($stmt->fetch(), 200, JSON_UNESCAPED_UNICODE);
+	return $response->withJson($res, 200, JSON_UNESCAPED_UNICODE);
 });
 
 $app->post('/admin/event', function ($request, $response) {
@@ -226,22 +377,26 @@ $app->post('/admin/event', function ($request, $response) {
 	$pdo = pdo();
 	
 	$stmt = $pdo->prepare("
-		INSERT INTO event (product_id, season_id, place_id, start_time, end_time,
-			regstartdate, start_date, max_participants, price, member_price)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO course_event (product_id, season_id, period, place_id, weekday, start_time, end_time,
+			regstartdate, start_date, end_date, notes, max_participants, price, member_price)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	");
 
 	$stmt->execute([
 			$obj->product_id,
 			$obj->season_id,
+			$obj->period,
 			$obj->place_id,
+			$obj->weekday,
 			$obj->start_time,
 			$obj->end_time,
 			$obj->regstartdate,
 			$obj->start_date,
+			$obj->end_date,
+			$obj->notes,
 			$obj->max_participants,
 			$obj->price,
-			$obj->member_price
+			$obj->member_price,
 		]);
 
 	$obj->id = $pdo->lastInsertId();
@@ -257,19 +412,23 @@ $app->put('/admin/event/{id}', function ($request, $response) {
 	$pdo = pdo();
 
 	$stmt = $pdo->prepare("
-		UPDATE event SET product_id = ?, season_id = ?, place_id = ?, start_time = ?, end_time = ?,
-			regstartdate = ?, start_date = ?, max_participants = ?, price = ?, member_price = ?
+		UPDATE course_event SET product_id = ?, season_id = ?, period = ?, place_id = ?, weekday = ?, start_time = ?, end_time = ?,
+			regstartdate = ?, start_date = ?, end_date = ?, notes = ?, max_participants = ?, price = ?, member_price = ?
 		WHERE id = ?
 	");
 
 	$stmt->execute([
 			$obj->product_id,
 			$obj->season_id,
+			$obj->period,
 			$obj->place_id,
+			$obj->weekday,
 			$obj->start_time,
 			$obj->end_time,
 			$obj->regstartdate,
 			$obj->start_date,
+			$obj->end_date,
+			$obj->notes,
 			$obj->max_participants,
 			$obj->price,
 			$obj->member_price,
@@ -285,7 +444,7 @@ $app->delete('/admin/event/{id}', function ($request, $response) {
 	$pdo = pdo();
 
 	$stmt = $pdo->prepare("
-		DELETE FROM event
+		DELETE FROM course_event
 		WHERE id = ?
 	");
 

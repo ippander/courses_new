@@ -1,6 +1,6 @@
 <?php
 
-require("config.php");
+require_once "config.php";
 
 // function getPlaces() {
 
@@ -124,6 +124,14 @@ function getCourse($id) {
 	
 	return $stmt->fetch();
 }
+
+// function getPerson($id) {
+
+// 	$stmt = pdo()->prepare("SELECT * FROM person WHERE id = ?");
+// 	$stmt->execute([$id]);
+	
+// 	return $stmt->fetch();
+// }
 
 function deleteCourse($id) {
 

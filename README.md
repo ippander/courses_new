@@ -2,9 +2,12 @@
 
 ## Client use cases
 
-1.	Create account
-2.	Add swimmer to account
-3.	Register to event
+1.		Create account
+1.2.	Add payer details
+2.		Add swimmers to account
+3.		Register to event
+4.		
+
 
 ## Admin use cases
 

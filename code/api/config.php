@@ -7,8 +7,8 @@ ini_set('display_errors',1);
 function pdo() {
 	$host = '127.0.0.1';
 	$db   = 'aurajoen_courses_new';
-	$user = 'course_admin';
-	$pass = 'aurajoki';
+	$user = 'aurajoen_new_usr';
+	$pass = '4ur4j0k1';
 	$charset = 'utf8';
 
 	$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
@@ -35,6 +35,7 @@ exit('not gonna happen');
 
 function queryDb( $query ) {
 
+exit('not gonna happen');
 	$link = connectDb();	
 
 	$result = mysqli_query( $link, $query )
@@ -45,6 +46,7 @@ function queryDb( $query ) {
 
 function insertDb( $query ) {
 
+exit('not gonna happen');
 	$link = connectDb();
 
 	$result = mysqli_query( $link, $query )
