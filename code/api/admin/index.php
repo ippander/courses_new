@@ -2,6 +2,82 @@
 
 require_once "f_course.php";
 
+function getLimitString($request) {
+	// 	$filters = json_decode($request->getQueryParams()['_filters']);
+
+	// $id = null;
+	// $searchField = "pa.event_id";
+
+	// if (property_exists($filters, 'event_id')) {
+	// 	$id = json_decode($request->getQueryParams()['_filters'])->event_id;
+	// } else {
+	// 	$id = json_decode($request->getQueryParams()['_filters'])->person_id;
+	// 	$searchField = "pa.person_id";
+	// }
+
+	$params = $request->getQueryParams();
+
+	$query = '';
+
+	if (array_key_exists('_filters', $params)) {
+
+		$query .= ' WHERE';
+		$filters = json_decode($params['_filters'], true);
+
+		foreach ($filters as $key => $value) {
+			$query .= " " . $key . " LIKE '" . $value . "%'";
+		}
+
+		// var_dump($filters);
+	}
+
+	$currentPage = $params['_page'];
+	$perPage = $params['_perPage'];
+	$sortDir = $params['_sortDir'];
+	$sortField = $params['_sortField'];
+
+	return  $query . " ORDER BY " . $sortField . " " . $sortDir . " LIMIT " . $perPage . " OFFSET " . $perPage * ($currentPage - 1);
+}
+
+/********** ACCOUNT *********/
+
+$app->get('/admin/account', function ($request, $response) {
+
+	$stmt = pdo()->prepare("SELECT * FROM account ORDER BY email");
+	$stmt->execute();
+
+	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->get('/admin/account/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+
+	$stmt = pdo()->prepare("SELECT * FROM account WHERE id = ?");
+	$stmt->execute([ $id ]);
+
+	return $response->withJson($stmt->fetch(), 200, JSON_UNESCAPED_UNICODE);
+});
+
+$app->put('/admin/account/{id}', function ($request, $response) {
+
+	$id = $request->getAttribute("id");
+	$obj = json_decode($request->getBody());
+	
+	$pdo = pdo();
+
+	$stmt = $pdo->prepare("
+		UPDATE account SET email = ?, password = ?
+		WHERE id = ?
+	");
+
+	$stmt->execute([
+		$obj->email, password_hash($obj->password, PASSWORD_DEFAULT), $id
+		]);
+
+	return $response->withJson($obj, 200, JSON_UNESCAPED_UNICODE);
+});
+
 /********** ENROLLMENTS *******/
 
 $app->get('/admin/enrollment', function ($request, $response) {
@@ -303,8 +379,18 @@ $app->post('/admin/period', function ($request, $response) {
 
 $app->get('/admin/course', function ($request, $response) {
 
+	$pdo = pdo();
+	$res = $pdo->query("SELECT count(*) FROM product");
 
-	return $response->withJson(getCourses(), 200, JSON_UNESCAPED_UNICODE);
+	$count = $res->fetchColumn();
+	$response = $response->withHeader('X-Total-Count', $count);
+
+	$query = "SELECT * FROM product" . getLimitString($request);
+
+	$stmt = pdo()->prepare($query);
+	$stmt->execute();
+	
+	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
 });
 
 $app->get('/admin/course/{id}', function ($request, $response) {
@@ -347,6 +433,7 @@ $app->get('/admin/event', function ($request, $response) {
 		SELECT p.name as course_name, s.name as season_name, e.*, pl.name as place_name
 		FROM product p, course_event e, place pl, season s
 		WHERE p.id=e.product_id and e.place_id=pl.id and e.season_id=s.id
+		ORDER BY course_name, season_name, weekday
 		");
 	$stmt->execute();
 
@@ -451,6 +538,29 @@ $app->delete('/admin/event/{id}', function ($request, $response) {
 	$stmt->execute([$id]);
 
 	return $response->withStatus(204);
+});
+
+$app->get('/admin/stats/current', function ($request, $response) {
+
+	$pdo = pdo();
+
+	$stmt = pdo()->prepare("
+select kurssit.*, (kurssit.PaikkojaYht - Osallistujat) PaikkojaVapaana, (Osallistujat / PaikkojaYht) ratio
+from (
+    select c.name Kurssi, pl.name Paikka, e.weekday, count(*) Osallistujat, e.max_participants PaikkojaYht, sum(e.price) Brutto
+    from product c, course_event e, place pl, participant pa
+    where c.id=e.product_id and e.place_id=pl.id and pa.event_id=e.id
+    group by e.id
+) kurssit
+order by PaikkojaVapaana desc
+		");
+
+	$stmt->execute();
+	$res['data'] = $stmt->fetchAll();
+
+	// var_dump($res);
+	
+	return $response->withJson($res, 200, JSON_UNESCAPED_UNICODE);
 });
 
 ?>

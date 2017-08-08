@@ -1,0 +1,83 @@
+<html>
+
+<head>
+
+    <meta charset="utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.12.3.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    	    $('#courses').DataTable( {
+    	    	"paging": false,
+    	        "ajax": "../api/admin/stats/current",
+    	        "columns": [
+    	        	{ "data": "Kurssi" },
+    	        	{ "data": "Paikka" },
+    	        	{
+                        "data": "weekday",
+                        "render": function(weekday) {
+
+                            switch (Number(weekday)) {
+                                case 0:
+                                    return 'Maanantaisin'
+                                case 1:
+                                    return 'Tiistaisin'
+                                case 2:
+                                    return 'Keskiviikkoisin'
+                                case 3:
+                                    return 'Torstaisin'
+                                case 4:
+                                    return 'Perjantaisin'
+                                case 5:
+                                    return 'Lauantaisin'
+                                default:
+                                    return 'Sunnuntaisin'
+                            }
+
+                        }
+                     },
+    	        	{ "data": "Osallistujat" },
+    	        	{ "data": "PaikkojaYht" },
+    	        	{ "data": "Brutto" },
+    	        	{ "data": "PaikkojaVapaana" },
+                    { "data": "ratio" },
+    	        ],
+                "order": [5, 'desc']
+    	    });
+    	});
+    </script>
+</head>
+
+<body>
+	<table id="courses" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+            	<th>Kurssi</th>
+            	<th>Paikka</th>
+                <th>Viikonpäivä</th>
+                <th>Osallistujat</th>
+                <th>Paikkoja Yhteensä</th>
+                <th>Brutto</th>
+                <th>Paikkoja Vapaana</th>
+                <th>Täyttöaste</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Kurssi</th>
+                <th>Paikka</th>
+                <th>Viikonpäivä</th>
+                <th>Osallistujat</th>
+                <th>Paikkoja Yhteensä</th>
+                <th>Brutto</th>
+                <th>Paikkoja Vapaana</th>
+                <th>Täyttöaste</th>    
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>

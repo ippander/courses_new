@@ -5,6 +5,18 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
     var nga = NgAdminConfigurationProvider;
 
     var enrollmentEntity = nga.entity('enrollment').label('Ilmoittautumiset')
+    var accountEntity = nga.entity('account').label('Käyttäjätili')
+
+    // accountEntity.creationView().fields([
+    //     nga.field('email'),
+    //     nga.field('password')
+    //     ])
+
+    accountEntity.listView().title('Käyttäjätilit').fields([nga.field('email', 'email')]).listActions(['edit'])
+    accountEntity.editionView().title('Käyttäjätili').fields([
+        nga.field('email', 'email'),
+        nga.field('password', 'password')
+        ])
 
     var personEntity = nga.entity('person').label('Kurssilainen')
 
@@ -74,6 +86,11 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
         .title('Kurssit')
         .fields(courseEntity.creationView().fields())
         .listActions(['edit'])
+        .sortField('name')
+        .sortDir('ASC')
+        .filters([ nga.field('name') ])
+
+    // courseEntity.filterView().fields([ nga.field('name') ])
 
     var placeEntity = nga.entity('place').label('Paikka')
 
@@ -238,6 +255,7 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
         .addEntity(eventEntity)
         .addEntity(enrollmentEntity)
         .addEntity(personEntity)
+        .addEntity(accountEntity)
 
     // nga.dashboard();
 
