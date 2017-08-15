@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Finvoice Version="1.0">
+  <SellerPartyDetails>
+    <SellerOrganisationName>Aurajoen uinti ry</SellerOrganisationName>
+  </SellerPartyDetails>
+  <BuyerPartyDetails>
+    <BuyerOrganisationName>Jari-Pekka Arvo</BuyerOrganisationName>
+    <BuyerPostalAddressDetails>	
+      <BuyerStreetName>Verkapiha 4 A 14</BuyerStreetName>
+      <BuyerTownName>Turku</BuyerTownName>
+      <BuyerPostCodeIdentifier>20100</BuyerPostCodeIdentifier>
+      <CountryCode>FI</CountryCode>
+      <CountryName>Finland</CountryName>
+      <BuyerPostOfficeBoxIdentifier></BuyerPostOfficeBoxIdentifier>
+    </BuyerPostalAddressDetails>
+  </BuyerPartyDetails>
+  <InvoiceDetails>
+    <InvoiceTypeCode CodeListAgencyIdentifier="SPY">INV01</InvoiceTypeCode>
+    <InvoiceTypeText>Invoice</InvoiceTypeText>
+    <OriginCode>Original</OriginCode>
+    <InvoiceNumber>LASKU_NUMERO</InvoiceNumber>
+    <InvoiceDate Format="CCYYMMDD">20161226</InvoiceDate>
+    <InvoiceTotalVatIncludedAmount AmountCurrencyIdentifier="???">???</InvoiceTotalVatIncludedAmount>
+  </InvoiceDetails>
+  <InvoiceRow />
+  <EpiDetails>
+    <EpiIdentificationDetails>
+      <EpiDate Format="CCYYMMDD">20161226</EpiDate>
+      <EpiReference></EpiReference>
+    </EpiIdentificationDetails>
+    <EpiPartyDetails>
+      <EpiBfiPartyDetails />
+      <EpiBeneficiaryPartyDetails>
+        <EpiAccountID IdentificationSchemeName="IBAN"></EpiAccountID>
+      </EpiBeneficiaryPartyDetails>
+    </EpiPartyDetails>
+    <EpiPaymentInstructionDetails>
+      <EpiInstructedAmount AmountCurrencyIdentifier="???"></EpiInstructedAmount>
+      <EpiCharge ChargeOption="SHA"></EpiCharge>
+      <EpiDateOptionDate Format="CCYYMMDD">20170110</EpiDateOptionDate>
+    </EpiPaymentInstructionDetails>
+  </EpiDetails>
+</Finvoice>
+

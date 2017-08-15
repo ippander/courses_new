@@ -1,6 +1,4 @@
 <?php
-// use \Psr\Http\Message\ServerRequestInterface as Request;
-// use \Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
@@ -12,8 +10,6 @@ $configuration = [
 $c = new \Slim\Container($configuration);
 
 $app = new \Slim\App($c);
-
-
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
@@ -209,13 +205,5 @@ $app->get('/enroll/{account_id}', function($request, $response, $args){
     
     return $response->withJson($er);    
 });
-
-
-
-
-
-
-
-
 
 $app->run();

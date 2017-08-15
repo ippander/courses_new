@@ -1,0 +1,40 @@
+<!-- saveInvoice = tallenna lasku -->
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://www.validius.net/ws/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <SOAP-ENV:Body>
+      <ns1:saveInvoiceOut>
+         <!-- Kirjautumistason palaute -->
+		 <ns1:response>
+            <ns1:code>0</ns1:code>
+            <ns1:reasonCode>0</ns1:reasonCode>
+            <ns1:text>OK</ns1:text>
+            <ns1:data xsi:nil="true"/>
+         </ns1:response>
+		 
+		 <!-- Laskutason palautteet, 0...x -->
+         <ns1:invoice>
+            <!-- Yksilöivä tunniste -->
+			<ns1:id>13883</ns1:id>
+			
+			<!-- Laskunumero -->
+            <ns1:invoicenumber>1020</ns1:invoicenumber>
+			
+			<!-- Ostaja -->
+            <ns1:buyerName>Teppo Testaaja</ns1:buyerName>
+			
+			<!-- Pääoma -->
+            <ns1:amount>124</ns1:amount>
+			
+			<!-- Lähettäjän viite -->
+            <ns1:senderref>REF-123456</ns1:senderref>
+            
+			<!-- Laskun palaute -->
+			<ns1:response>
+               <ns1:code>0</ns1:code>
+               <ns1:reasonCode>0</ns1:reasonCode>
+               <ns1:text>OK</ns1:text>
+               <ns1:data xsi:nil="true"/>
+            </ns1:response>
+         </ns1:invoice>
+      </ns1:saveInvoiceOut>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

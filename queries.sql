@@ -1,3 +1,41 @@
+
+-- !!! VARASIJAT PUUTTUU !!!
+
+update participant pa, (
+	select pa.id participation_id,
+		round(((10/100) * e.price), 2) discount,
+		round(e.price - ((10/100) * e.price), 2) final_price
+	from ( 
+		-- accounts that have under aged siblings participating on courses same time
+		select p.id, p.account_id
+		from
+			person p
+			inner join participant pa on (p.id=pa.person_id)
+			left join course_event e on (pa.event_id=e.id)
+		where pa.reskontra is null and p.birthday > '1999-08-12'
+		group by p.account_id
+		having count(distinct(p.id)) > 1
+		-- order by p.account_id asc, p.birthday desc
+	) as s_count
+		left join person p on (s_count.account_id=p.account_id)
+		left join participant pa on (p.id=pa.person_id)
+		left join course_event e on (pa.event_id=e.id)
+	where pa.id is not null and p.birthday > '1999-08-12'
+	order by p.account_id asc, p.birthday desc
+) sib
+set pa.discounted_amount=sib.discount, pa.discount_type = 1, pa.price = sib.final_price
+where pa.id=sib.participation_id
+;
+
+update participant pa, course_event e
+set pa.price=e.price
+where pa.price is null and pa.event_id=e.id
+;
+
+
+
+
+
 select pe.first_name, pe.last_name, c.name, pl.name, e.weekday, e.start_time, e.end_time
 from person pe, participant pa, product c, course_event e, place pl
 where

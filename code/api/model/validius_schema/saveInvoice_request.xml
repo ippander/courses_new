@@ -1,0 +1,155 @@
+<!-- saveInvoice = tallenna lasku -->
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://www.validius.net/ws/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:saveInvoiceIn>
+         <!-- Kirjautumistiedot -->
+         <ws:login>
+            <ws:customerid>1000000</ws:customerid>
+            <ws:securitykey>zyz</ws:securitykey>
+            <ws:userlogin>555555</ws:userlogin>
+         </ws:login>
+         
+         <!--Yksi tai useampi lasku -->
+         <ws:invoice>
+            <!-- Tilitysviite -->
+			<ws:reference>1234561</ws:reference>
+            
+			<!-- Asiakasnumero -->
+			<ws:customernumber>1000</ws:customernumber>
+            
+			<!--  Laskunumero -->
+			<ws:invoicenumber>1020</ws:invoicenumber>
+            
+			<!-- Tilausnumero -->
+			<ws:ordernumber>5600</ws:ordernumber>
+            
+			<!-- Viitteemme -->
+			<ws:ourcode>Viitteemme</ws:ourcode>
+            
+			<!-- Viitteenne -->
+			<ws:yourcode>Viitteenne</ws:yourcode>
+            
+			<!-- Laskun vapaateksti -->
+			<ws:freetext>Vapaata tekstiä</ws:freetext>
+            
+			<!-- Päiväys -->
+			<ws:invoicedate>2015-05-01</ws:invoicedate>
+            
+			<!-- Eräpäivä -->
+			<ws:duedate>2015-05-15</ws:duedate>
+            
+			<!-- Arvonlisäveron määrä -->
+			<ws:vatamount>24</ws:vatamount>
+			
+			<!-- Veroton yhteensä -->
+            <ws:netamount>100</ws:netamount>
+			
+			<!-- Verollinen yhteensä -->
+            <ws:amount>124</ws:amount>
+			
+			<!-- Viivästyskorko -->
+            <ws:overdue_interest>7.5</ws:overdue_interest>
+            
+			<!-- Maksunvalvonta: true = kyllä, false = ei -->
+			<ws:payment_control>true</ws:payment_control>
+			
+			<!-- Lähetystapa (email,einvoice,none,post) -->
+            <ws:sendtype>post</ws:sendtype>
+			
+			<!-- Vahvista automaattisesti true/false -->
+            <ws:autoconfirm>false</ws:autoconfirm>
+			
+			<!-- Lähettäjän viite, palautetaan vastauksessa -->
+            <ws:senderref>REF-123456</ws:senderref>
+			
+			<!-- Ostajan tiedot -->
+            <ws:invoice_buyer_address>
+               <!-- Nimi -->
+			   <ws:name>Teppo Testaaja</ws:name>
+               
+			   <!-- Nimi 2 -->
+			   <ws:name2>Osasto 1</ws:name2>
+               
+			   <!-- Katuosoite -->
+			   <ws:street>Testikatu 11</ws:street>
+               
+			   <!-- Postinumero -->
+			   <ws:postcode>00010</ws:postcode>
+               
+			   <!-- Postitoimipaikka -->
+			   <ws:city>Postitmp</ws:city>
+               
+			   <!-- Sähköposti -->
+			   <ws:email>teppo@testaaja.fi</ws:email>
+               
+			   <!-- Verkkolaskuosoite -->
+			   <ws:einvoice_address>123456</ws:einvoice_address>
+			   
+			   <!-- Välittäjän tunnus -->
+               <ws:einvoice_intermediator>4444</ws:einvoice_intermediator>
+               
+			   <!-- Y-tunnus, poimitaan jos customertype = company -->
+			   <ws:domestic_govid>6234344-7</ws:domestic_govid>
+               
+			   <!-- HETU, poimitaan jos customertype = person -->
+			   <ws:domestic_personid>010980-3948</ws:domestic_personid>
+			   
+			   <!-- Asiakastyyppi (company/person) -->
+			   <ws:customertype>company</ws:customertype>
+            </ws:invoice_buyer_address>
+            
+            <!-- Yksi tai useampi laskurivi -->
+            <ws:invoicerow>
+				<!-- Tuotekoodi -->
+               <ws:productcode>Tuotekoodi 1</ws:productcode>
+			   
+			   <!-- Nimike -->
+               <ws:productname>Tuote 1</ws:productname>
+			   
+			   <!-- Laskurivin vapaateksti -->
+               <ws:freetext>Vapaata</ws:freetext>
+			   
+			   <!-- Laskutettu kappalemäärä -->
+               <ws:invoiced_quantity>1</ws:invoiced_quantity>
+               
+			   <!-- Yksikkö -->
+			   <ws:invoiced_quantity_type>kpl</ws:invoiced_quantity_type>
+               
+			   <!-- Yksikköhinta (veroton) -->
+			   <ws:unitprice>100</ws:unitprice>
+			   
+			   <!-- Laskurivin alennusprosentti -->
+               <ws:discountpercent>50</ws:discountpercent>
+			   
+			   <!-- Laskurivin alv-% -->
+               <ws:vatpercent>24</ws:vatpercent>
+               
+			   <!-- Laskurivin arvonlisäveron määrä -->
+			   <ws:vatamount>12</ws:vatamount>
+			   
+			   <!-- Laskurivin veroton yhteensä -->
+               <ws:netamount>50</ws:netamount>
+			   
+			   <!-- Laskurivi verollinen yhteensä -->
+               <ws:amount>62</ws:amount>
+            </ws:invoicerow>
+            
+			<!-- 2. laskurivi -->
+			<ws:invoicerow>
+               <ws:productcode>Tuotekoodi 2</ws:productcode>
+               <ws:productname>Tuote 2</ws:productname>
+               <ws:freetext>Vapaata</ws:freetext>
+               <ws:invoiced_quantity>1</ws:invoiced_quantity>
+               <ws:invoiced_quantity_type>kpl</ws:invoiced_quantity_type>
+               <ws:unitprice>100</ws:unitprice>
+               <ws:discountpercent>50</ws:discountpercent>
+               <ws:vatpercent>24</ws:vatpercent>
+               <ws:vatamount>12</ws:vatamount>
+               <ws:netamount>50</ws:netamount>
+               <ws:amount>62</ws:amount>
+            </ws:invoicerow>
+         </ws:invoice>
+      </ws:saveInvoiceIn>
+   </soapenv:Body>
+</soapenv:Envelope>
