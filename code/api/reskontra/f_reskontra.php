@@ -51,6 +51,14 @@ function isProduction() {
 	return false;
 }
 
+// Hae per account:
+// - Jäsenyydet (tarkasta, että ovat ilmoittautuneet ainakin yhdelle kurssille)
+// - Ilmoittautumiset
+// 		- MUISTA VARASIJAT
+//		- 
+// - Alennukset
+// - 
+
 function sendInvoices() {
 
 	$saveInvoiceObj = new SaveInvoiceIn(
@@ -79,6 +87,10 @@ function sendInvoices() {
 // echo $client->__getLastRequest();
 	// return $saveInvoiceObj;
 	return $client->__getLastRequest();
+}
+
+function sendInvoice($accountId) {
+	$participations = getParticipations();
 }
 
 function getInvoiceRows() {
