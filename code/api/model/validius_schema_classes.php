@@ -52,7 +52,8 @@ class Invoice {
 		$sendtype,
 		$autoconfirm,
 		$ourcode,
-		$invoiceByerAddress
+		$invoiceByerAddress,
+		$invoicerow = []
 		) {
 		
 			$this->invoicedate = $invoicedate;
@@ -66,7 +67,7 @@ class Invoice {
 			$this->autoconfirm = $autoconfirm;
 			$this->ourcode = $ourcode;
 			$this->invoice_buyer_address = $invoiceByerAddress;
-			$this->invoicerow = [];
+			$this->invoicerow = $invoicerow;
 	}
 
 	function addInvoiceRow($invoicerow) {

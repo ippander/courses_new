@@ -25,6 +25,7 @@ $app->add(function ($req, $res, $next) {
 
 
 
+// require __DIR__ . '/reskontra/index.php';
 require 'admin/index.php';
 
 $app->post('/login', function ($request, $response, $args) {

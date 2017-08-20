@@ -86,7 +86,7 @@ function addCourse($obj) {
 		VALUES (?, ?)
 	");
 
-	$stmt->execute([$obj->name, $obj->description]);
+	$stmt->execute([ $obj->name, $obj->description ]);
 
 	$obj->id = $pdo->lastInsertId();
 

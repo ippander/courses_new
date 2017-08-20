@@ -231,17 +231,6 @@ GROUP BY p.id, e.id
 ORDER BY p.name, e.id
 ");
 
-// 	$stmt = pdo()->prepare("
-// SELECT p.id as course_id, p.name as course_name, p.description as course_description,
-// 	e.id as event_id, e.start_date, e.end_date, e.weekday, e.start_time, e.end_time,
-//     e.price, e.member_price, e.notes, pl.name as place, pl.address, e.max_participants,
-//     count(*) as current_participants
-// FROM product p, course_event e, place pl, participant pa
-// WHERE p.id=e.product_id AND e.place_id=pl.id AND pa.event_id=e.id
-// GROUP BY p.id, e.id
-// ORDER BY p.name, e.id
-// ");
-
 	$stmt->execute();
 
 	return $stmt->fetchAll();	
@@ -262,7 +251,7 @@ function isMember($pdo, $person_id) {
 function saveEnrollments($account_id, $enrollments) {
 
 	$pdo = pdo();
-
+var_dump($enrollments);
 	foreach ($enrollments as $e) {
 
 		$enrollStmt = $pdo->prepare("
@@ -295,34 +284,21 @@ function saveEnrollments($account_id, $enrollments) {
 		}
 	}
 
+	checkOut($account_id);
+
 	return $enrollments;
+}
+
+function checkOut($accountId) {
+
+	require_once dirname(__FILE__) . "reskontra/f_reskontra.php";
+
+	sendInvoice($accountId);
 }
 
 function getCurrentEnrollments($accountId) {
 
 	$pdo = pdo();
-
-	// id: number
-	// account_id: number
-	// first_name: string
-	// last_name: string
-	// birthday: string
-	// isMember: boolean
-	// notes: string
-
-	// id:		number
-	// name:	string
-	// description: string
-	// events: Event[]
-
-	// id: number;
-	// weekday: number;
-	// start_time: string;
-	// end_time: string;
-	// price: number
-	// place: string;
-	// address: string;
-	// notes: string
 
 	$enrollQuery = $pdo->prepare("
 			SELECT

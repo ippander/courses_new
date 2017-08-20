@@ -23,9 +23,9 @@ $app->add(function ($req, $res, $next) {
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
-require_once "f_reskontra.php";
+// require_once "f_reskontra.php";
 
-$app->get('/asdf', function ($request, $response) {
+$app->get('/asdf', function ($request, $response) use ($app) {
 
 	// return $response->withJson(sendInvoices(), 200, JSON_UNESCAPED_UNICODE);
     $body = $response->getBody();
@@ -34,5 +34,22 @@ $app->get('/asdf', function ($request, $response) {
     // return $response;
 });
 
+$app->post('/reskontra/sendInvoice/{accountId}', function ($request, $response) {
+
+    require_once "f_reskontra.php";
+
+    $accountId = $request->getAttribute("accountId");
+
+    return $response->withJson(sendInvoice($accountId));
+});
+
+$app->post('/reskontra/sendInvoices', function ($request, $response) {
+
+    require_once "f_reskontra.php";
+
+    $accountId = $request->getAttribute("accountId");
+
+    return $response->withJson(sendInvoices());
+});
 
 $app->run();

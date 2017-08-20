@@ -1,0 +1,74 @@
+<html>
+
+<head>
+
+    <meta charset="utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.12.3.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    	    $('#courses').DataTable( {
+    	    	"paging": false,
+    	        "ajax": "../api/admin/stats/participant_list",
+    	        "columns": [
+    	        	{ "data": "course" },
+                    { "data": "start_date" },
+                    { "data": "paiva" },
+    	        	{ "data": "place" },
+                    { "data": "start_time" },
+                    { "data": "end_time" },
+    	        	{ "data": "first_name" },
+    	        	{ "data": "last_name" },
+    	        	{ "data": "birthday" },
+    	        	{ "data": "notes" },
+                    { "data": "email" },
+                    { "data": "enrolled_at" }
+    	        ]
+                ,
+                "order": [1, 'asc']
+    	    });
+    	});
+    </script>
+</head>
+
+<body>
+	<table id="courses" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Kurssi</th>
+                <th>Alkaen</th>
+                <th>Viikonpäivä</th>
+                <th>Paikka</th>
+                <th>Alkaa</th>
+                <th>Päättyy</th>
+                <th>Etunimi</th>
+                <th>Sukunimi</th>
+                <th>Syntymäaika</th>
+                <th>Huomioita</th>    
+                <th>Email</th>    
+                <th>Ilmoittautui</th>    
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Kurssi</th>
+                <th>Alkaen</th>
+                <th>Viikonpäivä</th>
+                <th>Paikka</th>
+                <th>Alkaa</th>
+                <th>Päättyy</th>
+                <th>Etunimi</th>
+                <th>Sukunimi</th>
+                <th>Syntymäaika</th>
+                <th>Huomioita</th>    
+                <th>Email</th>    
+                <th>Ilmoittautui</th>    
+            </tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>

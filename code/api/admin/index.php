@@ -563,4 +563,35 @@ order by PaikkojaVapaana desc
 	return $response->withJson($res, 200, JSON_UNESCAPED_UNICODE);
 });
 
+$app->get('/admin/stats/participant_list', function ($request, $response) {
+
+	$pdo = pdo();
+
+	$stmt = pdo()->prepare("
+		select c.name course,
+			start_date,
+			case e.weekday
+		    	when 0 then 'Maanantaisin'
+		    	when 1 then 'Tiistaisin'
+		    	when 2 then 'Keskiviikkoisin'
+		    	when 3 then 'Torstaisin'
+		    	when 4 then 'Perjantaisin'
+		    	when 5 then 'Lauantaisin'
+		    	when 6 then 'Sunnuntaisin'
+		    end as paiva
+		    ,
+		pl.name place, e.start_time, e.end_time, p.first_name, p.last_name, p.birthday, p.notes, a.email, pa.enrolled_at
+		from product c, course_event e, person p, participant pa, account a, place pl
+		where c.id=e.product_id and e.id=pa.event_id and pa.person_id=p.id and p.account_id=a.id and e.place_id=pl.id
+		order by e.start_date, e.start_time, pa.enrolled_at
+	");
+
+	$stmt->execute();
+	$res['data'] = $stmt->fetchAll();
+
+	// var_dump($res);
+	
+	return $response->withJson($res, 200, JSON_UNESCAPED_UNICODE);
+});
+
 ?>
