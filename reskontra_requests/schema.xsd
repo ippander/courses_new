@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.validius.net/ws/" xmlns:tns="http://www.validius.net/ws/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<!-- Strings -->
+	<xsd:simpleType name="string_2">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="2" />
+			<xsd:maxLength value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_5">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="5" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_14">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="14" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_0_20">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0" />
+			<xsd:maxLength value="20" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_20">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="20" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_25">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="25" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_0_35">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0" />
+			<xsd:maxLength value="35" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_35">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="35" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_64">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="64" />
+			<xsd:maxLength value="64" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_70">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="70" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_100">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_200">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="200" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_512">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="512" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="string_1_1000">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1" />
+			<xsd:maxLength value="1000" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Decimals -->
+	<xsd:simpleType name="decimal_0_99">
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="99" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Enums -->
+	<xsd:simpleType name="customertypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="company" />
+			<xsd:enumeration value="person" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="invoiceLanguageType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="FI" />
+			<xsd:enumeration value="EN" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="sendtypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="email" />
+			<xsd:enumeration value="einvoice" />
+			<xsd:enumeration value="none" />
+			<xsd:enumeration value="post" />
+			<xsd:enumeration value="post_priority" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Collectionrow -->
+	<xsd:complexType name="collectionrowType">
+		<xsd:complexContent>
+			<xsd:extension base="tns:reminderrowType">
+				<xsd:sequence>
+					<xsd:element name="reminderdate" type="xsd:date" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<!-- Collection -->
+	<xsd:complexType name="collectionType">
+		<xsd:complexContent>
+			<xsd:extension base="tns:taskType">
+				<xsd:sequence>
+					 <!-- Collectionrow -->
+					<xsd:element name="taskrow" type="tns:collectionrowType" maxOccurs="unbounded" />
+				 </xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>                
+	</xsd:complexType>
+	
+	<!-- Invoice buyer address -->
+	<xsd:complexType name="invoiceBuyerAddressType">
+		<xsd:sequence>
+			<xsd:element name="name" type="tns:string_1_70" />
+			<xsd:element name="name2" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="street" type="tns:string_1_35" />
+			<xsd:element name="postcode" type="tns:string_1_35" />
+			<xsd:element name="city" type="tns:string_1_35" />
+			<xsd:element name="countrycode" type="tns:string_2" minOccurs="0" />
+			<xsd:element name="email" type="tns:string_1_70" minOccurs="0" />
+			<xsd:element name="einvoice_address" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="einvoice_intermediator" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="domestic_govid" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="domestic_personid" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="vat_number" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="customertype" type="tns:customertypeType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Invoicerow -->
+	<xsd:complexType name="invoicerowType">
+		<xsd:sequence>
+			<xsd:element name="productcode" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="productname" type="tns:string_1_100" />
+			<xsd:element name="freetext" type="tns:string_1_200" minOccurs="0" />
+			<xsd:element name="invoiced_quantity" type="xsd:decimal" />
+			<xsd:element name="invoiced_quantity_type" type="tns:string_1_14" minOccurs="0" />
+			<xsd:element name="unitprice" type="xsd:decimal" />
+			<xsd:element name="discountpercent" type="xsd:decimal" />
+			<xsd:element name="vatpercent" type="xsd:decimal" />
+			<xsd:element name="vatamount" type="xsd:decimal" />
+			<xsd:element name="netamount" type="xsd:decimal" />
+			<xsd:element name="amount" type="xsd:decimal" />
+		</xsd:sequence>
+	</xsd:complexType>            
+				
+	<!-- Invoice -->        
+	<xsd:complexType name="invoiceType">
+		<xsd:sequence>                    
+			<!-- Invoice data -->
+			<xsd:element name="reference" type="tns:string_1_25" minOccurs="0" />
+			<xsd:element name="customernumber" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="invoicenumber" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="original_invoicenumber" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="ordernumber" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="ourcode" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="yourcode" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="freetext" type="tns:string_1_512" minOccurs="0" />
+			<xsd:element name="language" type="tns:invoiceLanguageType" minOccurs="0" />
+			<xsd:element name="invoicedate" type="xsd:date" />
+			<xsd:element name="duedate" type="xsd:date" />
+			<xsd:element name="vatamount" type="xsd:decimal" />
+			<xsd:element name="netamount" type="xsd:decimal" />
+			<xsd:element name="amount" type="xsd:decimal" />
+			<xsd:element name="overdue_interest" type="tns:decimal_0_99" />
+			<xsd:element name="payment_control" type="xsd:boolean" />
+			<xsd:element name="sendtype" type="tns:sendtypeType" />
+			<xsd:element name="autoconfirm" type="xsd:boolean" />
+			<xsd:element name="senderref" type="tns:string_1_35" minOccurs="0" />
+			
+			<!-- Invoice buyer -->
+			<xsd:element name="invoice_buyer_address" type="tns:invoiceBuyerAddressType" />
+								
+			<!-- Invoicerow -->
+			<xsd:element name="invoicerow" type="tns:invoicerowType" maxOccurs="unbounded" />
+			
+			<!-- Attachments -->
+			<xsd:element name="attachment_pdf" type="xsd:string" minOccurs="0" maxOccurs="3" />
+		</xsd:sequence>
+	</xsd:complexType> 
+	
+	<!-- Member -->
+	<xsd:complexType name="memberType">
+		<xsd:sequence>
+			<xsd:element name="id" type="xsd:integer" />
+			<xsd:element name="sibling" type="xsd:integer" nillable="true" />
+			<xsd:element name="invoicenumber" type="tns:string_0_20" />
+			<xsd:element name="buyerName" type="tns:string_1_70" />
+			<xsd:element name="amount" type="xsd:decimal" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Reminderrow -->
+	<xsd:complexType name="reminderrowType">
+		<xsd:sequence>
+			<xsd:element name="reference" type="tns:string_1_25" minOccurs="0" />
+			<xsd:element name="invoicenumber" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="invoicedate" type="xsd:date" />
+			<xsd:element name="duedate" type="xsd:date" />
+			<xsd:element name="amount" type="xsd:decimal" />
+			<xsd:element name="customerfee" type="xsd:decimal" minOccurs="0" />
+			<xsd:element name="debtground" type="tns:string_1_1000" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Reminder -->
+	<xsd:complexType name="reminderType">
+		<xsd:complexContent>
+			<xsd:extension base="tns:taskType">
+				<xsd:sequence>
+					 <!-- Reminderrow -->
+					<xsd:element name="taskrow" type="tns:reminderrowType" maxOccurs="unbounded" />
+				 </xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>                
+	</xsd:complexType>
+	
+	<!-- Task -->        
+	<xsd:complexType name="taskType">
+		<xsd:sequence>                    
+			<!-- Task data -->
+			<xsd:element name="customernumber" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="overdue_interest" type="tns:decimal_0_99" />
+			<xsd:element name="autoconfirm" type="xsd:boolean" />
+			<xsd:element name="process" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="senderref" type="tns:string_1_35" minOccurs="0" />
+			
+			<!-- Task buyer -->
+			<xsd:element name="task_buyer_address" type="tns:taskBuyerAddressType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Task buyer address -->
+	<xsd:complexType name="taskBuyerAddressType">
+		<xsd:sequence>
+			<xsd:element name="name" type="tns:string_1_70" />
+			<xsd:element name="name2" type="tns:string_1_35" minOccurs="0" />
+			<xsd:element name="street" type="tns:string_1_35" />
+			<xsd:element name="postcode" type="tns:string_1_35" />
+			<xsd:element name="city" type="tns:string_1_35" />
+			<xsd:element name="countrycode" type="tns:string_2" minOccurs="0" />
+			<xsd:element name="email" type="tns:string_1_70" minOccurs="0" />
+			<xsd:element name="domestic_govid" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="domestic_personid" type="tns:string_1_20" minOccurs="0" />
+			<xsd:element name="customertype" type="tns:customertypeType" />
+		</xsd:sequence>
+	</xsd:complexType>
+				
+	<!-- TaskResponse -->
+	<xsd:complexType name="taskResponseType">
+		<xsd:sequence>
+			<xsd:element name="id" type="xsd:integer" nillable="true" />
+			<xsd:element name="invoicenumber" type="tns:string_0_20" nillable="true" />
+			<xsd:element name="buyerName" type="tns:string_1_70" nillable="true" />
+			<xsd:element name="amount" type="xsd:decimal" nillable="true" />
+			<xsd:element name="senderref" type="tns:string_1_35" minOccurs="0" />                    
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="member" type="tns:memberType" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:element name="parent" type="xsd:integer" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- TaskRequest -->
+	<xsd:complexType name="taskRequestType">
+		<xsd:sequence>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="id" type="xsd:integer" />
+				<xsd:element name="invoicenumber" type="tns:string_1_20" />
+			</xsd:choice>
+			<xsd:element name="date_start" type="xsd:date" nillable="true" />
+			<xsd:element name="date_end" type="xsd:date" nillable="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- MultiTaskRequest -->
+	<xsd:complexType name="multiTaskRequestType">
+		<xsd:sequence>
+			<xsd:choice minOccurs="0">
+				<xsd:element name="id" type="xsd:integer" maxOccurs="1000" />
+				<xsd:element name="invoicenumber" type="tns:string_1_20" maxOccurs="1000" />
+			</xsd:choice>
+			<xsd:element name="date_start" type="xsd:date" nillable="true" />
+			<xsd:element name="date_end" type="xsd:date" nillable="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- PDFRequest -->
+	<xsd:complexType name="pdfRequestType">
+		<xsd:choice>
+			<xsd:element name="id" type="xsd:integer" />
+			<xsd:element name="invoicenumber" type="tns:string_1_20" />
+		</xsd:choice>
+	</xsd:complexType>
+	
+	<!-- Login -->
+	<xsd:complexType name="loginRequestType">
+		<xsd:sequence>
+			<xsd:element name="customerid" type="xsd:integer" />
+			<xsd:element name="securitykey" type="tns:string_64" />
+			<xsd:element name="userlogin" type="xsd:string" nillable="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- WSResponse -->
+	<xsd:complexType name="wsResponseType">
+		<xsd:sequence>
+			<xsd:element name="code" type="xsd:integer" />
+			<xsd:element name="reasonCode" type="xsd:integer" />
+			<xsd:element name="text" type="xsd:string" />
+			<xsd:element name="data" type="xsd:string" nillable="true" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Confirm task -->
+	<xsd:complexType name="confirmTaskRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="id" type="xsd:integer" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="confirmTaskResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="task" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="confirmTaskIn" type="tns:confirmTaskRequestType" />
+	<xsd:element name="confirmTaskOut" type="tns:confirmTaskResponseType" />                        
+	
+	<!-- Delete task -->
+	<xsd:complexType name="deleteTaskRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="id" type="xsd:integer" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="deleteTaskResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="task" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="deleteTaskIn" type="tns:deleteTaskRequestType" />
+	<xsd:element name="deleteTaskOut" type="tns:deleteTaskResponseType" />
+	
+	<!-- Do payment -->
+	<xsd:complexType name="doPaymentRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="id" type="xsd:integer" />
+			<xsd:element name="amount" type="xsd:decimal" />
+			<xsd:element name="paydate" type="xsd:date" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="doPaymentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="payment" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="amount" type="xsd:decimal" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="doPaymentIn" type="tns:doPaymentRequestType" />
+	<xsd:element name="doPaymentOut" type="tns:doPaymentResponseType" />
+	
+	<!-- Focus refund -->
+	<xsd:complexType name="focusRefundRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="id" type="xsd:integer" />
+			<xsd:element name="to_id" type="xsd:integer" />
+			<xsd:element name="amount" type="xsd:decimal" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="focusRefundResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="focus" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="amount" type="xsd:decimal" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="focusRefundIn" type="tns:focusRefundRequestType" />
+	<xsd:element name="focusRefundOut" type="tns:focusRefundResponseType" />
+	
+	<!-- Invoice PDF -->
+	<xsd:complexType name="invoicePDFRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="request" type="tns:pdfRequestType" />
+			<xsd:element name="realtime_data" type="xsd:boolean" minOccurs="0" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="invoicePDFResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="pdf" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:integer" />
+						<xsd:element name="invoicenumber" type="tns:string_0_20" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="invoicePDFIn" type="tns:invoicePDFRequestType" />
+	<xsd:element name="invoicePDFOut" type="tns:invoicePDFResponseType" />
+	
+	<!-- Save collection -->
+	<xsd:complexType name="saveCollectionRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="task" type="tns:collectionType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="saveCollectionResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="task" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="saveCollectionIn" type="tns:saveCollectionRequestType" />
+	<xsd:element name="saveCollectionOut" type="tns:saveCollectionResponseType" />
+							
+	<!-- Save Finvoice -->
+	<xsd:complexType name="saveFinvoiceRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="autoconfirm" type="xsd:boolean" />
+			<xsd:element name="finvoice" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="data" type="xsd:string" />
+						<xsd:element name="attachment" minOccurs="0" maxOccurs="unbounded">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="invoicenumber" type="tns:string_1_20" />
+									<xsd:element name="pdf" type="xsd:string" />
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:complexType name="saveFinvoiceResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="finvoice" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+						<xsd:element name="invoice" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="saveFinvoiceIn" type="tns:saveFinvoiceRequestType" />
+	<xsd:element name="saveFinvoiceOut" type="tns:saveFinvoiceResponseType" />                        
+				
+	<!-- Save invoice -->
+	<xsd:complexType name="saveInvoiceRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="invoice" type="tns:invoiceType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="saveInvoiceResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="invoice" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="saveInvoiceIn" type="tns:saveInvoiceRequestType" />
+	<xsd:element name="saveInvoiceOut" type="tns:saveInvoiceResponseType" />
+	
+	<!-- Save L2100 CSV -->
+	<xsd:complexType name="saveL2100CSVRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="autoconfirm" type="xsd:boolean" />
+			<xsd:element name="l2100" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="data" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:complexType name="saveL2100CSVResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="l2100" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+						<xsd:element name="invoice" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="saveL2100CSVIn" type="tns:saveL2100CSVRequestType" />
+	<xsd:element name="saveL2100CSVOut" type="tns:saveL2100CSVResponseType" />
+	
+	<!-- Save PostiXML -->
+	<xsd:complexType name="savePostiXMLRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="autoconfirm" type="xsd:boolean" />
+			<xsd:element name="postiXML" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="data" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:complexType name="savePostiXMLResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="postiXML" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filename" type="xsd:string" nillable="true" />
+						<xsd:element name="response" type="tns:wsResponseType" />
+						<xsd:element name="invoice" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>                                    
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="savePostiXMLIn" type="tns:savePostiXMLRequestType" />
+	<xsd:element name="savePostiXMLOut" type="tns:savePostiXMLResponseType" />
+	
+	<!-- Save reminder -->
+	<xsd:complexType name="saveReminderRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="task" type="tns:reminderType" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="saveReminderResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="task" type="tns:taskResponseType" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>                                    
+	<xsd:element name="saveReminderIn" type="tns:saveReminderRequestType" />
+	<xsd:element name="saveReminderOut" type="tns:saveReminderResponseType" />
+	
+	<!-- Task payment -->
+	<xsd:complexType name="taskPaymentRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="request" type="tns:multiTaskRequestType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="taskPaymentResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="payment" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:integer" />
+						<xsd:element name="sibling" type="xsd:integer" nillable="true" />
+						<xsd:element name="parent" type="xsd:integer" nillable="true" />
+						<xsd:element name="feeid" type="xsd:integer" />
+						<xsd:element name="parent_feeid" type="xsd:integer" nillable="true" />
+						<xsd:element name="invoicenumber" type="tns:string_0_20" />
+						<xsd:element name="typecode" type="tns:string_1_5" />
+						<xsd:element name="amount" type="xsd:decimal" />
+						<xsd:element name="feetype" type="xsd:integer" />
+						<xsd:element name="feetype_text" type="tns:string_1_35" />
+						<xsd:element name="paytype" type="xsd:integer" />
+						<xsd:element name="paytype_text" type="tns:string_1_35" />
+						<xsd:element name="paydate" type="xsd:date" />
+						<xsd:element name="execution_date" type="xsd:date" nillable="true" />
+						<xsd:element name="created" type="xsd:date" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="taskPaymentIn" type="tns:taskPaymentRequestType" />
+	<xsd:element name="taskPaymentOut" type="tns:taskPaymentResponseType" />
+	
+	<!-- Task state -->
+	<xsd:complexType name="taskStateRequestType">
+		<xsd:sequence>
+			<xsd:element name="login" type="tns:loginRequestType" />
+			<xsd:element name="request" type="tns:multiTaskRequestType" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="taskStateResponseType">
+		<xsd:sequence>
+			<xsd:element name="response" type="tns:wsResponseType" />
+			<xsd:element name="task" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="id" type="xsd:integer" />
+						<xsd:element name="sibling" type="xsd:integer" nillable="true" />
+						<xsd:element name="invoicenumber" type="tns:string_0_20" />
+						<xsd:element name="buyerName" type="tns:string_1_70" />
+						<xsd:element name="typecode" type="tns:string_1_5" />
+						<xsd:element name="jobstate" type="xsd:integer" />
+						<xsd:element name="jobstate_text" type="tns:string_0_35" />
+						<xsd:element name="invoicestate" type="tns:string_0_35" />
+						<xsd:element name="invoicestate_text" type="tns:string_0_35" />                                
+						<xsd:element name="invoicedate" type="xsd:date" />
+						<xsd:element name="duedate" type="xsd:date" />
+						<xsd:element name="amount" type="xsd:decimal" />
+						<xsd:element name="interest" type="xsd:decimal" />
+						<xsd:element name="reminderfee" type="xsd:decimal" />
+						<xsd:element name="collectionfee" type="xsd:decimal" />
+						<xsd:element name="customerfee" type="xsd:decimal" />
+						<xsd:element name="customer_standardfee" type="xsd:decimal" />
+						<xsd:element name="amountopen" type="xsd:decimal" />
+						<xsd:element name="focusleft" type="xsd:decimal" nillable="true" />
+						<xsd:element name="reference" type="tns:string_1_25" nillable="true" />
+						<xsd:element name="control_reference" type="tns:string_1_25" nillable="true" />
+						<xsd:element name="latest_sendmethod" type="tns:string_1_35" nillable="true" />
+						<xsd:element name="latest_sendmethod_text" type="tns:string_1_35" nillable="true" />
+						<xsd:element name="confirmed" type="xsd:boolean" />
+						<xsd:element name="deleted" type="xsd:boolean" />
+						<xsd:element name="created" type="xsd:date" />
+						<xsd:element name="member" type="tns:memberType" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="taskStateIn" type="tns:taskStateRequestType" />
+	<xsd:element name="taskStateOut" type="tns:taskStateResponseType" />
+</xsd:schema>

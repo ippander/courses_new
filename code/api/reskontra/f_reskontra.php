@@ -1,7 +1,7 @@
 <?php
 
-require_once('../config.php');
-require_once('../model/validius_schema_classes.php');
+require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/../model/validius_schema_classes.php');
 
 function getLogin($production = false) {
 
@@ -48,7 +48,7 @@ function getClient($production = false) {
 }
 
 function isProduction() {
-	return true;
+	return false;
 }
 
 function weekday($wd) {

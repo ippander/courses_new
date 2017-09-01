@@ -18,7 +18,8 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
-            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:4200')
+            // ->withHeader('Access-Control-Allow-Origin', 'http://localhost:4200')
+            ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
@@ -205,6 +206,24 @@ $app->get('/enroll/{account_id}', function($request, $response, $args){
     }
     
     return $response->withJson($er);    
+});
+
+$app->post('/sendInvoice/{accountId}', function ($request, $response) {
+
+    require_once "reskontra/f_reskontra.php";
+
+    $accountId = $request->getAttribute("accountId");
+
+    return $response->withJson(sendInvoice($accountId));
+});
+
+$app->post('/sendInvoices', function ($request, $response) {
+
+    require_once __DIR__ . "/reskontra/f_reskontra.php";
+
+    $accountId = $request->getAttribute("accountId");
+
+    return $response->withJson(sendInvoices());
 });
 
 $app->run();

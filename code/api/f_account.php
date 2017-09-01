@@ -275,23 +275,22 @@ var_dump($enrollments);
 				$memberStmt->execute([ $e->swimmer->id ]);
 			}
 
+			checkOut($account_id);
 			$pdo->commit();
 
 		} catch (Exception $e) {
 			$pdo->rollback();
-			echo $e->getTraceAsString();
+			// echo $e->getTraceAsString();
 			throw $e;
 		}
 	}
-
-	checkOut($account_id);
 
 	return $enrollments;
 }
 
 function checkOut($accountId) {
 
-	require_once dirname(__FILE__) . "reskontra/f_reskontra.php";
+	require_once(__DIR__ . "/reskontra/f_reskontra.php");
 
 	sendInvoice($accountId);
 }
