@@ -227,6 +227,7 @@ FROM product p
 	INNER JOIN course_event e ON (p.id=e.product_id)
     INNER JOIN place pl ON (e.place_id=pl.id)
     LEFT JOIN participant pa on (pa.event_id=e.id)
+WHERE regstartdate <= current_timestamp and period NOT IN ('H1', 'Q1')
 GROUP BY p.id, e.id
 ORDER BY p.name, e.id
 ");
@@ -306,7 +307,7 @@ function getCurrentEnrollments($accountId) {
 				pe.id person_id, pe.account_id, pe.first_name, pe.last_name, pe.birthday, true isMember, pe.notes
 			FROM product p, course_event e, participant pa, person pe, place pl
 			WHERE p.id=e.product_id and e.id=pa.event_id and pa.person_id=pe.id and e.place_id=pl.id
-				AND account_id = ?
+				AND account_id = ? and e.period NOT IN ('H1', 'Q1')
 		");
 		
 	$enrollQuery->execute([ $accountId ]);

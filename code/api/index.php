@@ -18,15 +18,16 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
-            // ->withHeader('Access-Control-Allow-Origin', 'http://localhost:4200')
-            ->withHeader('Access-Control-Allow-Origin', '*')
+            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:4200')
+            // ->withHeader('Access-Control-Allow-Origin', '*')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
 
 
-// require __DIR__ . '/reskontra/index.php';
+require __DIR__ . '/reskontra/index.php';
+// require 'reskontra/index.php';
 require 'admin/index.php';
 
 $app->post('/login', function ($request, $response, $args) {

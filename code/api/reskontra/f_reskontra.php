@@ -39,6 +39,7 @@ function getClient($production = false) {
 		$client = new SoapClient("https://demo.validius.net/ws/?wsdl",
 			array(
 				"trace" => true
+				// ,"exceptions" => 0
 				)
 			);
 
@@ -71,8 +72,6 @@ function weekday($wd) {
 }
 
 function toInvoiceRow($row) {
-// var_dump($row);
-	// $siblingDiscount = empty($row['discount_percent']) ? "" : ", sisaralennus";
 
 	$siblingDiscount = array_map(function($r) {
 		return $r['name'] . ' ' . $r['percent'] . "%";
@@ -80,7 +79,7 @@ function toInvoiceRow($row) {
 
 	$productname =
 		$row['course_name'] . ', ' . $row['place'] . ', ' . weekday($row['weekday'])
-		. ' ' . $row['start_time'] . '-' . $row['end_time'] . ' ' . implode(", ", $siblingDiscount);
+		. ' ' . $row['start_time'] . '-' . $row['end_time'];
 	
 	$quantity = 1;
 	$price = $row['event_price'];
@@ -99,10 +98,8 @@ function toInvoiceRow($row) {
 		$vatamount,
 		$netamount,
 		$amount,
-		$row['first_name'] . ' ' . $row['last_name'] 
+		$row['first_name'] . ' ' . $row['last_name']  . ' ' . implode(", ", $siblingDiscount)
 	);
-
-	// $invoice->addInvoiceRow($row);
 
 }
 
@@ -143,7 +140,6 @@ function toInvoice($rows, $memberships, $buyer) {
 		$buyer['email']
 	);
 
-// var_dump($invoiceRows);
 	$invoiceRows = array_map("toMemberRow", $memberships);
 	$invoiceRows = array_merge($invoiceRows, array_map("toInvoiceRow", $rows ? $rows : []));
 
@@ -185,7 +181,7 @@ function toInvoice($rows, $memberships, $buyer) {
 function sendInvoices() {
 
 	$ids = getParticipatingAccounts(pdo());
-	
+
 	foreach ($ids as $id) {
 		sendInvoice($id);
 	}
@@ -194,6 +190,7 @@ function sendInvoices() {
 function sendInvoice($accountId) {
 
 	$pdo = pdo();
+	$client = getClient(isProduction());
 
 	try {
 
@@ -221,10 +218,9 @@ function sendInvoice($accountId) {
 			$invoice
 		);
 
-		$client = getClient(isProduction());
 		$response = $client->saveInvoice($saveInvoiceObj);
 		
-		echo $client->__getLastRequest();
+		// echo $client->__getLastRequest();
 
 		$pdo->commit();
 
@@ -232,7 +228,7 @@ function sendInvoice($accountId) {
 
 	} catch (Exception $e) {
 		$pdo->rollback();
-		// throw $e;
+		throw $e;
 	}
 
 }
@@ -357,7 +353,7 @@ function sortByBirthday($rows) {
 	return $rows;
 }
 
-function setSiblingDiscount($pdo, $rows) {
+function setSiblingDiscount(&$pdo, $rows) {
 // Find underaged members under this account
 // Take all after oldest one
 // Check their participations and add discount rows
@@ -369,19 +365,18 @@ function setSiblingDiscount($pdo, $rows) {
 		";
 
 	$stmt = $pdo->prepare($query);
-var_dump($rows);
+
 	$stmt->execute([ $rows[0]['account_id'] ]);
 	$persons = $stmt->fetchAll();
 
 	$now = new DateTime();
-	$eighteen = $now->sub(new DateInterval("P18Y"))->format("Y-m-d");
+	$eighteen = $now->sub(new DateInterval("P18Y"));
 
 	$underAgedCount = 0;
-
 	$discountedSibling = array_filter(sortByBirthday($persons), function($row) use ($eighteen, &$underAgedCount) {
 
 		$current = new DateTime($row['birthday']);
-		
+
 		if ($current > $eighteen) {
 			$underAgedCount++;
 		}
@@ -395,13 +390,24 @@ var_dump($rows);
 		return in_array($row['person_id'], $discountedSibling);
 	});
 
-	$stmt = $pdo->prepare("
-		INSERT INTO participant_discount_type (discount_type_id, participant_id)
-		VALUES (1, ?)
-		");
+	if (sizeof($discounted)) {
 
-	foreach ($discounted as $dis) {
-		$stmt->execute([$dis['participation_id']]);
+		$valueStrings = [];
+
+		foreach ($discounted as $dis) {
+			$valueStrings[] = "(1, ?)";
+		}
+
+		$query = "
+			INSERT IGNORE INTO participant_discount_type (discount_type_id, participant_id) VALUES " .
+			join(',', $valueStrings);
+
+		$stmt = $pdo->prepare(
+			$query
+			);
+
+		$stmt->execute(array_map(function($dis) { return $dis['participation_id']; }, $discounted));
+		// $stmt->execute([$dis['participation_id']]);
 	}
 }
 
@@ -421,9 +427,6 @@ function calculatePrices($pdo, $participations) {
 		$row['discount_types'] = [];
 		$stmt->execute([ $row['participation_id'] ]);	
 		$dis = $stmt->fetchAll();
-
-		// var_dump($dis);
-		// var_dump($row);
 
 		if (!sizeof($dis)) {
 			$row['price'] = $row['event_price'];
@@ -469,11 +472,12 @@ function getActualParticipations($pdo, $accountId, $eventId) {
 			WHERE e.id = $eventId
 		    ) part 
 		WHERE part.rownum < max_participants AND part.account_id = $accountId
+		LIMIT 20
 	";
 
 	$stmt = $pdo->prepare($query);
 	$stmt->execute();
-	
+
 	return $stmt->fetchAll();	
 
 }
@@ -485,7 +489,7 @@ function getParticipatingAccounts($pdo) {
 		FROM person p INNER JOIN participant pa ON (p.id=pa.person_id)
 		WHERE pa.id IS NOT NULL AND pa.reskontra IS NULL
 		GROUP BY p.account_id
-		LIMIT 50
+--		LIMIT 20
 	");
 
 	$stmt->execute();

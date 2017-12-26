@@ -2,22 +2,25 @@
 
 require_once "f_course.php";
 
-function getLimitString($request) {
-	// 	$filters = json_decode($request->getQueryParams()['_filters']);
+function getSort($sortField, $sortDirection, $defaultSortFields, $defaultSortDirection) {
 
-	// $id = null;
-	// $searchField = "pa.event_id";
+	$sortStr = "";
 
-	// if (property_exists($filters, 'event_id')) {
-	// 	$id = json_decode($request->getQueryParams()['_filters'])->event_id;
-	// } else {
-	// 	$id = json_decode($request->getQueryParams()['_filters'])->person_id;
-	// 	$searchField = "pa.person_id";
-	// }
+	if (!empty($sortField)) {
+		$sortStr = "ORDER BY $sortField $sortDirection";
+	} else if (!empty($defaultSortFields)) {
+		$sortStr = "ORDER BY " . join(",", $defaultSortFields) . " $defaultSortDirection";
+	}
 
-	$params = $request->getQueryParams();
+	return $sortStr;
+}
+
+function getLimitString($request, $defaultSortFields, $defaultSortDirection) {
 
 	$query = '';
+	$params = $request->getQueryParams();
+
+	if (!sizeof($params) || !(array_key_exists('_sortField', $params) && array_key_exists('_sortDir', $params))) return $query;
 
 	if (array_key_exists('_filters', $params)) {
 
@@ -33,20 +36,40 @@ function getLimitString($request) {
 
 	$currentPage = $params['_page'];
 	$perPage = $params['_perPage'];
-	$sortDir = $params['_sortDir'];
-	$sortField = $params['_sortField'];
 
-	return  $query . " ORDER BY " . $sortField . " " . $sortDir . " LIMIT " . $perPage . " OFFSET " . $perPage * ($currentPage - 1);
+	$sort = getSort($params['_sortField'], $params['_sortDir'], $defaultSortFields, $defaultSortDirection);
+
+	// return  $query . " ORDER BY " . $sortField . " " . $sortDir . " LIMIT " . $perPage . " OFFSET " . $perPage * ($currentPage - 1);
+
+	return  $query . " " . $sort . " LIMIT " . $perPage . " OFFSET " . $perPage * ($currentPage - 1);
+
 }
+
+function totalCountFrom($pdo, $table) {
+	$res = $pdo->query("SELECT count(*) FROM " . $table);
+	return $res->fetchColumn();
+}
+
+function limitedResults($pdo, $table, $request, $defaultSortFields, $defaultSortDirection) {
+	$query = "SELECT * FROM " . $table . " " . getLimitString($request, $defaultSortFields, $defaultSortDirection);
+	$stmt = $pdo->prepare($query);
+	$stmt->execute();
+	return $stmt->fetchAll();
+}
+
+function listQueryFor($table, $request, $response, $defaultSortFields = [], $defaultSortDirection = "") {
+	$pdo = pdo();
+	$response = $response->withHeader('X-Total-Count', totalCountFrom($pdo, $table));	
+	return $response->withJson(
+		limitedResults($pdo, $table, $request, $defaultSortFields, $defaultSortDirection),
+		200, JSON_UNESCAPED_UNICODE);	
+}
+
 
 /********** ACCOUNT *********/
 
 $app->get('/admin/account', function ($request, $response) {
-
-	$stmt = pdo()->prepare("SELECT * FROM account ORDER BY email");
-	$stmt->execute();
-
-	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+	return listQueryFor("account", $request, $response, [ "email" ], "asc");
 });
 
 $app->get('/admin/account/{id}', function ($request, $response) {
@@ -162,11 +185,7 @@ $app->delete('/admin/enrollment/{id}', function ($request, $response) {
 /*********** PERSON **********/
 
 $app->get('/admin/person', function ($request, $response) {
-
-	$stmt = pdo()->prepare("SELECT * FROM person ORDER BY last_name, first_name");
-	$stmt->execute();
-
-	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+	return listQueryFor("person", $request, $response);
 });
 
 $app->get('/admin/person/{id}', function ($request, $response) {
@@ -373,68 +392,66 @@ $app->post('/admin/period', function ($request, $response) {
 });
 
 
-
-
 /********** COURSE ************/
 
 $app->get('/admin/course', function ($request, $response) {
-
-	$pdo = pdo();
-	$res = $pdo->query("SELECT count(*) FROM product");
-
-	$count = $res->fetchColumn();
-	$response = $response->withHeader('X-Total-Count', $count);
-
-	$query = "SELECT * FROM product" . getLimitString($request);
-
-	$stmt = pdo()->prepare($query);
-	$stmt->execute();
-	
-	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);
+	return listQueryFor("product", $request, $response);
 });
 
 $app->get('/admin/course/{id}', function ($request, $response) {
-
-
 	return $response->withJson(getCourse($request->getAttribute("id")), 200, JSON_UNESCAPED_UNICODE);
 });
 
 $app->post('/admin/course', function ($request, $response) {
-
-
 	$added = addCourse(json_decode($request->getBody()));
-
 	return $response->withJson($added, 201, JSON_UNESCAPED_UNICODE);
 });
 
 $app->put('/admin/course/{id}', function ($request, $response) {
-
 	$updated = updateCourse(json_decode($request->getBody()), $request->getAttribute("id"));
-
 	return $response->withJson($updated, 200, JSON_UNESCAPED_UNICODE);
 });
 
 $app->delete('/admin/course/{id}', function ($request, $response) {
-
 	$added = deleteCourse($request->getAttribute("id"));
-
 	return $response->withStatus(204);
 });
 
 
 
+// function listQueryFor($table, $request, $response, $defaultSortFields = [], $defaultSortDirection = "") {
+// 	$pdo = pdo();
+// 	$response = $response->withHeader('X-Total-Count', totalCountFrom($pdo, $table));	
+// 	return $response->withJson(
+// 		limitedResults($pdo, $table, $request, $defaultSortFields, $defaultSortDirection),
+// 		200, JSON_UNESCAPED_UNICODE);	
+// }
 
 
 /********* EVENT ************/
 
 $app->get('/admin/event', function ($request, $response) {
 
-	$stmt = pdo()->prepare("
-		SELECT p.name as course_name, s.name as season_name, e.*, pl.name as place_name
+	$count = "count(*)";
+	$fields = "p.name as course_name, s.name as season_name, e.*, pl.name as place_name";
+
+	$query = "
+		SELECT {the_money_part}
 		FROM product p, course_event e, place pl, season s
 		WHERE p.id=e.product_id and e.place_id=pl.id and e.season_id=s.id
-		ORDER BY course_name, season_name, weekday
-		");
+		-- ORDER BY course_name, season_name, weekday
+	";
+
+	$countQuery = str_replace('{the_money_part}', $count, $query);
+
+	$pdo = pdo();
+
+	$res = $pdo->query($countQuery);
+	$response = $response->withHeader('X-Total-Count', $res->fetchColumn());
+
+	$dataQuery = str_replace('{the_money_part}', $fields, $query) . getLimitString($request, [], null);
+
+	$stmt = $pdo->prepare($dataQuery);
 	$stmt->execute();
 
 	return $response->withJson($stmt->fetchAll(), 200, JSON_UNESCAPED_UNICODE);

@@ -12,7 +12,14 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
     //     nga.field('password')
     //     ])
 
-    accountEntity.listView().title('Käyttäjätilit').fields([nga.field('email', 'email')]).listActions(['edit'])
+    accountEntity.listView()
+        .title('Käyttäjätilit')
+        .fields([nga.field('email', 'email')])
+        .listActions(['edit'])
+        .sortField('email')
+        .sortDir('ASC')
+
+
     accountEntity.editionView().title('Käyttäjätili').fields([
         nga.field('email', 'email'),
         nga.field('password', 'password')
@@ -64,6 +71,9 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
         .title('Kurssilaiset')
         .fields(personEntity.creationView().fields())
         .listActions(['edit'])
+        .sortField('last_name, first_name')
+        .sortDir('ASC')
+
 
 
 
@@ -241,9 +251,11 @@ myApp.config(['NgAdminConfigurationProvider', function(NgAdminConfigurationProvi
                         { label: 'Sunnuntai', value: '6' }
                     ]),
             nga.field('start_time').label('Aloitusaika'),
-            nga.field('end_time').label('Lopetusaika'),
+            nga.field('end_time').label('Lopetusaika')
 
             )
+        .sortField('course_name, weekday, start_time')
+        .sortDir('ASC')
         .listActions(['show', 'edit'])
 
     // create an admin application
